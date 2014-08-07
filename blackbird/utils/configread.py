@@ -16,7 +16,6 @@ import validate
 
 from blackbird.utils import base as base
 from blackbird.utils import helpers
-from blackbird.utils import argumentparse
 
 
 class JobObserver(base.Observer):
