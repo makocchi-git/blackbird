@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from exceptions import Execption
+
 
 class BlackbirdError(Execption):
     """
