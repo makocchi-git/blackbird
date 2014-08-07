@@ -102,7 +102,7 @@ class BlackBird(object):
             while True:
                 threadnames = [thread.name for thread in threading.enumerate()]
                 for job_name, concrete_job in self.jobs.items():
-                    if not job_name in threadnames:
+                    if job_name not in threadnames:
                         new_thread = Executor(
                             name=job_name,
                             job=concrete_job['method'],
@@ -135,6 +135,7 @@ class BlackBird(object):
                 files_preserve=[
                     self.logger.handlers[0].stream
                 ],
+                detach_process=self.args.detach_process,
                 uid=self.config['global']['user'],
                 gid=self.config['global']['group'],
                 stdout=log_file,
@@ -190,9 +191,9 @@ class JobCreator(object):
             if section == 'global':
                 continue
 
-            #Since validate in utils/configread, does not occur here Error
-            #In the other sections are global,
-            #that there is a "module" option is collateral.
+            # Since validate in utils/configread, does not occur here Error
+            # In the other sections are global,
+            # that there is a "module" option is collateral.
             plugin_name = options['module']
             job_kls = self.plugins[plugin_name]
 
