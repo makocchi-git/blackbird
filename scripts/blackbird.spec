@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 %define name blackbird
-%define version 0.4.1
+%define version 0.4.2
 %define unmangled_version %{version}
 %define release 1%{dist}
 %define blackbird_user bbd
@@ -26,8 +26,15 @@ BuildArch: noarch
 Vendor: ARASHI, Jumpei <jumpei.arashi@arashike.com>
 Packager: ARASHI, Jumpei <jumpei.arashi@arashike.com>
 Requires: python-argparse python-configobj python-daemon python-ipaddr python-lockfile python-setuptools
+Requires: logrotate
 Url: https://github.com/Vagrants/blackbird.git
 BuildRequires: python-setuptools
+
+%if 0%{?rhel} >= 7
+Requires(post)  : systemd
+Requires(preun) : systemd
+Requires(postun): systemd
+%endif
 
 %description
 UNKNOWN
@@ -53,13 +60,18 @@ install -dm 0755 $RPM_BUILD_ROOT%{pid_dir}
 install -dm 0755 $RPM_BUILD_ROOT%{include_cfg_dir}
 install -dm 0755 $RPM_BUILD_ROOT%{plugins}
 
-install -p -m 0755 scripts/blackbird.init $RPM_BUILD_ROOT%{_sysconfdir}/init.d/blackbird
 install -p -m 0755 scripts/blackbird.bin $RPM_BUILD_ROOT%{_bindir}/blackbird
 install -p -m 0644 scripts/blackbird.cfg $RPM_BUILD_ROOT%{_sysconfdir}/blackbird/defaults.cfg
 install -p -m 0644 scripts/blackbird-statistics.cfg $RPM_BUILD_ROOT%{_sysconfdir}/blackbird/conf.d/statistics.cfg
 install -p -m 0644 scripts/blackbird-zabbix_sender.cfg $RPM_BUILD_ROOT%{_sysconfdir}/blackbird/conf.d/zabbix_sender.cfg
 install -p -m 0644 scripts/blackbird.logrotate $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/blackbird
 install -p -m 0644 scripts/blackbird.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/blackbird
+
+%if 0%{?rhel} >= 7
+install -p -m 0644 scripts/blackbird.service $RPM_BUILD_ROOT%{_unitdir}/blackbird.service
+%else
+install -p -m 0755 scripts/blackbird.init $RPM_BUILD_ROOT%{_sysconfdir}/init.d/blackbird
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -95,6 +107,10 @@ service %{name} stop > /dev/null 2>&1 || \
 %config(noreplace) %{_sysconfdir}/logrotate.d/blackbird
 
 %changelog
+* Thu Aug 7 2014 makocchi <makocchi@gmail.com> - 0.4.2-1
+- support el7
+- add foreground option (-f)
+
 * Thu Jun 26 2014 ARASHI, Jumpei <jumpei.arashi@arashike.com> - 0.4.1-1
 - Generate thread name from section.
 
