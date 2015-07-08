@@ -1,6 +1,9 @@
 machine:
   timezone:
     Asia/Tokyo
+  pre:
+    - sudo groupadd nobody
+    - sudo useradd nobody
 
 dependencies:
   override:
