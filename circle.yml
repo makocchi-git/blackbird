@@ -1,0 +1,13 @@
+machine:
+  timezone:
+    Asia/Tokyo
+
+dependencies:
+  override:
+    - python setup.py develop
+
+test:
+  override:
+    - pep8 blackbird/*.py
+    - pep8 blackbird/**/*.py
+    - (cd blackbird && nosetests)
