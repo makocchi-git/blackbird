@@ -5,9 +5,12 @@ machine:
 dependencies:
   override:
     - python setup.py develop
+    - pip install coverage
 
 test:
   override:
     - pep8 blackbird/*.py
     - pep8 blackbird/**/*.py
-    - (cd blackbird && nosetests)
+    - (cd blackbird && nosetests --with-coverage --cover-html)
+  post:
+    - mv blackbird/cover $CIRCLE_ARTIFACTS
